@@ -24,6 +24,8 @@ public class TriggerScenario : MonoBehaviour
     [Space(5)] [Header("Time Properties")] [Space(5)]
     [SerializeField]
     private bool isSlow;
+    [SerializeField]
+    private float slowAmount = 0.5f;
 
 
     public List<EnemyController> enemies = new List<EnemyController>();
@@ -40,22 +42,30 @@ public class TriggerScenario : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+     
     }
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Player")
         {
+            _playerController.playerAnim.speed = 1f;
+            _playerController.laserAim.GetComponent<MeshRenderer>().enabled = false;
             _playerController.NextMove(destination.position,timeToReach);
             _playerController.CurrentAnimator(isTrigger, isTrue , animName);
-            _playerController.TimeScaler(isSlow);
             if (isContainShoot)
             {
+                
                 foreach(EnemyController enemy in enemies)
                 {
+                    enemy.enemyAnim.speed = slowAmount;
                     enemy.InShootZone = true;
                     enemy.enemyAnim.SetBool("ShootTime", true);
                 }
+                _playerController.laserAim.GetComponent<MeshRenderer>().enabled = true;
+            }
+            if (isSlow)
+            {
+                _playerController.playerAnim.speed = slowAmount;
             }
         }
     }

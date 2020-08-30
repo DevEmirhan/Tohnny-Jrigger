@@ -7,13 +7,22 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject laserAim;
     public Animator playerAnim;
-    public bool isCheckPointReached = false;
+
+    public GameObject playerRagdoll;
+    public GameObject playerAnimated;
     public bool isAlive = true;
+   
+    public bool isCheckPointReached = false;
     public Transform startBox;
+    //public Transform checkPointStart;
+
+
     private bool isActivated = false;
     [SerializeField]
     private float firstDestTime;
+    
    
     void Start()
     {
@@ -29,14 +38,15 @@ public class PlayerController : MonoBehaviour
             isActivated = true;
             NextMove(startBox.position , firstDestTime );
             CurrentAnimator(false, true, "Run");
-            TimeScaler(false);
+            //TimeScaler(false, 1f);
         }
+      
         
     }
 
     public void NextMove(Vector3 endValue, float duration)
     {
-        transform.DOMove(endValue,duration).SetEase(Ease.Linear);
+        transform.DOMove(endValue,duration).SetEase(Ease.Linear).SetId("NextDest");
     }
 
     public void CurrentAnimator( bool isTrigger , bool isTrue ,  string animName)
@@ -51,24 +61,41 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    public void TimeScaler(bool isSlow)
-    {
-        if (isSlow)
-        {
-            Time.timeScale = 0.5f;
-        }
-        else
-        {
-            Time.timeScale = 1f;
-        }
-    }
 
     public void Shoot()
     {
         
 
     }
+    public void PlayerDead()
+    {
+        isAlive = false;
+        GetComponent<BoxCollider>().isTrigger = true;
+        CopyTransformData(playerAnimated.transform, playerRagdoll.transform);
+        playerRagdoll.SetActive(true);
+        playerAnimated.SetActive(false);
+        DOTween.Kill("NextDest");
+       
 
+    }
+    public void CopyTransformData (Transform sourceTransform, Transform destinationTransform)
+    {
+        if(sourceTransform.childCount != destinationTransform.childCount)
+        {
+            Debug.LogWarning("Invalid transform copy! They need to match at hierarchy.");
+            return;
+        }
+        for (int i = 0; i < sourceTransform.childCount; i++)
+        {
+            
+            var source = sourceTransform.GetChild(i);
+            var destination = destinationTransform.GetChild(i);
+            destination.position = source.position;
+            destination.rotation = source.rotation;
+
+            CopyTransformData(source, destination);   
+        }
+    }
     
 }
 

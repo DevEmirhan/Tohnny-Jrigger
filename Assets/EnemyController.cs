@@ -1,15 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class EnemyController : MonoBehaviour
 {
     private PlayerController playerController;
     public Animator enemyAnim;
+
+    public GameObject enemyAnimated;
+    public GameObject enemyRagdoll;
     public bool isAlive = true;
+    public Rig Rigweight;
+
     public bool InShootZone = false;
     public GameObject targetPoint;
     public float ShootTime = 1f;
+    public float endTime = 1.5f;
     public bool isGunFired = false;
     void Start()
     {
@@ -28,6 +35,7 @@ public class EnemyController : MonoBehaviour
                 isGunFired = true;
                 StartCoroutine("ShootSequence");
             }
+           
             
         }
     }
@@ -35,16 +43,33 @@ public class EnemyController : MonoBehaviour
     {
         if (isAlive)
         {
-            //Bullet Particle
-            //Bullet Shoot as Pool Object
-            playerController.isAlive = false;
-            GameManager.Instance.gameState = GameState.Lose;
+            
+            playerController.PlayerDead();
+            enemyAnim.SetBool("PlayerLose", true);
+            
+            
         }
+    }
+
+    public void EnemyDead()
+    {
+        isAlive = false;
+        GetComponent<BoxCollider>().isTrigger = true;
+        playerController.CopyTransformData(enemyAnimated.transform, enemyRagdoll.transform);
+        enemyRagdoll.SetActive(true);
+        enemyAnimated.SetActive(false);
+       
     }
     IEnumerator ShootSequence()
     {
         yield return new WaitForSeconds(ShootTime);
-        ShootPlayer();
+        //ShootPlayer();
+        yield return new WaitForSeconds(endTime);
+        if (isAlive)
+        {
+            //GameManager.Instance.gameState = GameState.Lose;
+        } 
+        
     }
 
 }
