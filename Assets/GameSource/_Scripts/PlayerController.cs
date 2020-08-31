@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public GameObject laserAim;
     public Animator playerAnim;
 
+    public GameObject bloodFX;
     public GameObject playerRagdoll;
     public GameObject playerAnimated;
     public bool isAlive = true;
@@ -75,6 +76,7 @@ public class PlayerController : MonoBehaviour
     {
         isAlive = false;
         GetComponent<BoxCollider>().isTrigger = true;
+        bloodFX.GetComponent<ParticleSystem>().Play();
         CopyTransformData(playerAnimated.transform, playerRagdoll.transform);
         playerRagdoll.SetActive(true);
         playerAnimated.SetActive(false);

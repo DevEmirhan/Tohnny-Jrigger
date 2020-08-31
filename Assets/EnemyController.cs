@@ -13,6 +13,7 @@ public class EnemyController : MonoBehaviour
     public bool isAlive = true;
     public Rig Rigweight;
     public GameObject shootFx;
+    public GameObject BloodFx;
 
     public bool InShootZone = false;
     public GameObject targetPoint;
@@ -31,13 +32,13 @@ public class EnemyController : MonoBehaviour
         if (InShootZone)
         {
             targetPoint.transform.position = playerController.transform.position;
-            //if (!isGunFired)
-            //{
-            //    isGunFired = true;
-            //    StartCoroutine("ShootSequence");
-            //}
-           
-            
+            if (!isGunFired)
+            {
+                isGunFired = true;
+                StartCoroutine("ShootSequence");
+            }
+
+
         }
     }
     public void ShootPlayer()
@@ -45,31 +46,35 @@ public class EnemyController : MonoBehaviour
         if (isAlive)
         {
             
-            if (!isGunFired)
-            {
-                shootFx.GetComponent<ParticleSystem>().Play();
-                isGunFired = true;
-                StartCoroutine("ShootSequence");
-            }
-            playerController.PlayerDead();
-            enemyAnim.SetBool("PlayerLose", true);
             
+            shootFx.GetComponent<ParticleSystem>().Play();
+            playerController.PlayerDead();
             
         }
     }
 
+     
+            
+    
+            
+            
     public void EnemyDead()
     {
         isAlive = false;
         GetComponent<BoxCollider>().isTrigger = true;
         playerController.CopyTransformData(enemyAnimated.transform, enemyRagdoll.transform);
+        BloodFx.GetComponent<ParticleSystem>().Play();
         enemyRagdoll.SetActive(true);
         enemyAnimated.SetActive(false);
        
     }
     IEnumerator ShootSequence()
     {
+        yield return new WaitForSeconds(ShootTime);
+        ShootPlayer();
        
+
+      
         yield return new WaitForSeconds(endTime);
         if (isAlive)
         {

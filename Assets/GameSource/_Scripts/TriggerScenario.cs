@@ -54,7 +54,9 @@ public class TriggerScenario : MonoBehaviour
             foreach (EnemyController enemy in enemies)
             {
                 enemy.enemyAnim.speed = 1f;
-                
+                enemy.GetComponent<Collider>().isTrigger = true;
+                enemy.enemyAnim.SetBool("PlayerLose", true);
+
             }
         }
     }
@@ -81,6 +83,7 @@ public class TriggerScenario : MonoBehaviour
                     enemy.enemyAnim.speed = slowAmount;
                     enemy.InShootZone = true;
                     enemy.enemyAnim.SetBool("ShootTime", true);
+                    enemy.Rigweight.weight = 0f;
                 }
                 _playerController.laserAim.GetComponent<MeshRenderer>().enabled = true;
             }

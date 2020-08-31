@@ -35,7 +35,7 @@ public class PlayerInput : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         
-        if(other.gameObject.tag == "Enemy")
+        if(other.gameObject.tag == "Enemy" && GetComponent<MeshRenderer>().enabled == true)
         {
             Debug.Log("I saw an enemy");
             if (Input.GetMouseButtonDown(0))
@@ -47,14 +47,6 @@ public class PlayerInput : MonoBehaviour
 
                 
             }
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "Enemy")
-        {
-            Debug.Log("I missed an enemy");
-            other.gameObject.GetComponent<EnemyController>().ShootPlayer();
         }
     }
     
