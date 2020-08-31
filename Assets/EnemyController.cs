@@ -12,6 +12,7 @@ public class EnemyController : MonoBehaviour
     public GameObject enemyRagdoll;
     public bool isAlive = true;
     public Rig Rigweight;
+    public GameObject shootFx;
 
     public bool InShootZone = false;
     public GameObject targetPoint;
@@ -30,11 +31,11 @@ public class EnemyController : MonoBehaviour
         if (InShootZone)
         {
             targetPoint.transform.position = playerController.transform.position;
-            if (!isGunFired)
-            {
-                isGunFired = true;
-                StartCoroutine("ShootSequence");
-            }
+            //if (!isGunFired)
+            //{
+            //    isGunFired = true;
+            //    StartCoroutine("ShootSequence");
+            //}
            
             
         }
@@ -44,6 +45,12 @@ public class EnemyController : MonoBehaviour
         if (isAlive)
         {
             
+            if (!isGunFired)
+            {
+                shootFx.GetComponent<ParticleSystem>().Play();
+                isGunFired = true;
+                StartCoroutine("ShootSequence");
+            }
             playerController.PlayerDead();
             enemyAnim.SetBool("PlayerLose", true);
             
@@ -62,14 +69,14 @@ public class EnemyController : MonoBehaviour
     }
     IEnumerator ShootSequence()
     {
-        yield return new WaitForSeconds(ShootTime);
-        //ShootPlayer();
+       
         yield return new WaitForSeconds(endTime);
         if (isAlive)
         {
-            //GameManager.Instance.gameState = GameState.Lose;
+         GameManager.Instance.gameState = GameState.Lose;
         } 
         
     }
+ 
 
 }

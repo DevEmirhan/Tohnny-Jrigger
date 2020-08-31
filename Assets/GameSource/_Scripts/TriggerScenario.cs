@@ -5,6 +5,8 @@ using UnityEngine;
 public class TriggerScenario : MonoBehaviour
 {
     private PlayerController _playerController;
+    private AmmoUI ammoUI;
+    
 
     [Space(5)] [Header("Move Properties")][Space(5)]
     [SerializeField]
@@ -26,6 +28,9 @@ public class TriggerScenario : MonoBehaviour
     private bool isSlow;
     [SerializeField]
     private float slowAmount = 0.5f;
+    [SerializeField]
+    private int desiredBulletForZone = 6;
+    
 
 
     public List<EnemyController> enemies = new List<EnemyController>();
@@ -35,27 +40,43 @@ public class TriggerScenario : MonoBehaviour
     void Start()
     {
         _playerController = FindObjectOfType<PlayerController>();
-     
+        ammoUI = FindObjectOfType<AmmoUI>();
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-     
+     if(_playerController.isAlive == false)
+        {
+            _playerController.playerAnim.speed = 1f;
+            foreach (EnemyController enemy in enemies)
+            {
+                enemy.enemyAnim.speed = 1f;
+                
+            }
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Player")
         {
+            if (ammoUI.gameObject.activeInHierarchy)
+            {
+            ammoUI.gameObject.SetActive(false);
+            }
+
             _playerController.playerAnim.speed = 1f;
+            _playerController.bulletAmount = desiredBulletForZone;
             _playerController.laserAim.GetComponent<MeshRenderer>().enabled = false;
             _playerController.NextMove(destination.position,timeToReach);
             _playerController.CurrentAnimator(isTrigger, isTrue , animName);
             if (isContainShoot)
             {
-                
-                foreach(EnemyController enemy in enemies)
+                ammoUI.gameObject.SetActive(true);
+                ammoUI.Reload();
+                foreach (EnemyController enemy in enemies)
                 {
                     enemy.enemyAnim.speed = slowAmount;
                     enemy.InShootZone = true;
@@ -69,4 +90,5 @@ public class TriggerScenario : MonoBehaviour
             }
         }
     }
+ 
 }

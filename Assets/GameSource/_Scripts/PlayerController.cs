@@ -13,12 +13,13 @@ public class PlayerController : MonoBehaviour
     public GameObject playerRagdoll;
     public GameObject playerAnimated;
     public bool isAlive = true;
+    public int bulletAmount = 6;
    
     public bool isCheckPointReached = false;
     public Transform startBox;
     //public Transform checkPointStart;
 
-
+    private AmmoUI ammoUI;
     private bool isActivated = false;
     [SerializeField]
     private float firstDestTime;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerAnim = GetComponentInChildren<Animator>();
+        ammoUI = FindObjectOfType<AmmoUI>();
 
     }
 
@@ -38,7 +40,9 @@ public class PlayerController : MonoBehaviour
             isActivated = true;
             NextMove(startBox.position , firstDestTime );
             CurrentAnimator(false, true, "Run");
-            //TimeScaler(false, 1f);
+            ammoUI.gameObject.SetActive(false);
+
+          
         }
       
         
